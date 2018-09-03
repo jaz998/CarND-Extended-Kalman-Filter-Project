@@ -2,6 +2,7 @@
 #include "tools.h"
 #include "Eigen/Dense"
 #include <iostream>
+#include <math.h>
 
 using namespace std;
 using Eigen::MatrixXd;
@@ -107,6 +108,24 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
      * Update the process noise covariance matrix.
      * Use noise_ax = 9 and noise_ay = 9 for your Q matrix.
    */
+  double delta_t = (measurement_pack.timestamp_ - previous_timestamp_)/1000000.0;
+  previous_timestamp_ = measurement_pack.timestamp_;
+
+  // Initializing state transition matrix F
+  ekf_.F_ << 1, 0, delta_t, 0,
+			  0, 1, 0, delta_t,
+			  0, 0, 1, 0,
+			  0, 0, 0, 1;
+
+  double noise_ax = 9.0;
+  double noise_ay = 9.0;
+
+   //update the proces covriance matrix Q
+  ekf_.Q_ << pow(delta_t, 4) / 4 * noise_ax, 0, pow(delta_t, 3) / 2 * noise_ax, 0,
+	  0, pow(delta_t, 4) / 4 * noise_ay, 0, pow(delta_t, 3) / 2 * noise_ay,
+	  pow(delta_t, 3) / 2 * noise_ax, 0, pow(delta_t, 2)*noise_ax, 0,
+	  0, pow(delta_t, 3) / 2 * pow(noise_ay, 2), 0, pow(delta_t, 2)*pow(noise_ay, 2);
+
 
   ekf_.Predict();
 
