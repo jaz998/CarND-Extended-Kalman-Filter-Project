@@ -1,7 +1,11 @@
 #include "kalman_filter.h"
+#include <iostream>
+#include <math.h>
 
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
+using namespace std;
+
 
 // Please note that the Eigen library does not initialize 
 // VectorXd or MatrixXd objects with zeros upon creation.
@@ -25,24 +29,23 @@ void KalmanFilter::Predict() {
   TODO:
     * predict the state
   */
+	x_ = F_ * x_;
+	P_ = F_ * P_*F_.transpose() + Q_;
 }
 
 void KalmanFilter::Update(const VectorXd &z) {
   /**
-  TODO:
-    * update the state by using Kalman Filter equations
+  TODO:	
+    * update the state by using Kalman Filter equations (Laser updates)
   */
-	
-	//Prediction
-	x_ = F_ * x_;
-	P_ = F_ * P_*F_.transpose() + Q_;
+	cout << "Calling EKF update function" << endl;
 
 	// Measurement Update
 	VectorXd y = z - H_ * x_;
 	MatrixXd S = H_ * P_*H_.transpose() + R_;
 	MatrixXd K = P_ * H_.transpose()*S.inverse();
 
-	x_ = x_ + K * y;
+	x_ = x_ + K * y; // Updating the state variables
 	MatrixXd I = MatrixXd::Identity(4, 4);
 	P_ = (I - K * H_)*P_;
 
@@ -55,4 +58,26 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
   TODO:
     * update the state by using Extended Kalman Filter equations
   */
+	double px = x_[0];
+	double py = x_[1];
+	double vx = x_[2];
+	double vy = x_[3];
+
+	double rho = sqrt(pow(px, 2) + pow(py, 2));
+	double phi = atan(py / px);
+	double rho_dot = (px*vx) + (py*vy) / sqrt(pow(px, 2) + pow(py, 2));
+
+	VectorXd h = VectorXd(3);
+	h << rho, phi, rho_dot;
+	VectorXd y = z - h * x_;
+	MatrixXd S = H_ * P_*H_.transpose() + R_;
+	MatrixXd K = P_ * H_.transpose()*S.transpose();
+	x_ = x_ + K * y;
+	MatrixXd I = MatrixXd::Identity(4, 4);
+	P_ = (I - K * H_)*P_;
+
+
+
+
 }
+ 
