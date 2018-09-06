@@ -38,10 +38,14 @@ int main()
   vector<VectorXd> estimations;
   vector<VectorXd> ground_truth;
 
+
+
   h.onMessage([&fusionEKF,&tools,&estimations,&ground_truth](uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length, uWS::OpCode opCode) {
     // "42" at the start of the message means there's a websocket message event.
     // The 4 signifies a websocket message
     // The 2 signifies a websocket event
+
+	int lineNum = 1;
 
     if (length && length > 2 && data[0] == '4' && data[1] == '2')
     {
@@ -66,7 +70,12 @@ int main()
     	  string sensor_type;
     	  iss >> sensor_type;
 
+		  cout << "Reading File line " << lineNum << endl;
+		  lineNum = lineNum + 1;
+	      cout << "Reading File line " << lineNum << endl;
+
     	  if (sensor_type.compare("L") == 0) {
+			  cout << "Reading Laser data" << endl;
       	  		meas_package.sensor_type_ = MeasurementPackage::LASER;
           		meas_package.raw_measurements_ = VectorXd(2);
           		float px;
@@ -77,7 +86,7 @@ int main()
           		iss >> timestamp;
           		meas_package.timestamp_ = timestamp;
           } else if (sensor_type.compare("R") == 0) {
-
+			  cout << "Reading Radar data" << endl;
       	  		meas_package.sensor_type_ = MeasurementPackage::RADAR;
           		meas_package.raw_measurements_ = VectorXd(3);
           		float ro;
@@ -89,6 +98,7 @@ int main()
           		meas_package.raw_measurements_ << ro,theta, ro_dot;
           		iss >> timestamp;
           		meas_package.timestamp_ = timestamp;
+				cout << "Finish reading radar data " << endl;
           }
           float x_gt;
     	  float y_gt;
@@ -123,7 +133,7 @@ int main()
     	  estimate(3) = v2;
     	  
     	  estimations.push_back(estimate);
-
+		  cout << "line 135" << endl;  
     	  VectorXd RMSE = tools.CalculateRMSE(estimations, ground_truth);
 
           json msgJson;
@@ -136,12 +146,14 @@ int main()
           auto msg = "42[\"estimate_marker\"," + msgJson.dump() + "]";
           // std::cout << msg << std::endl;
           ws.send(msg.data(), msg.length(), uWS::OpCode::TEXT);
+		  cout << "line 148" << endl;
 	  
         }
       } else {
         
         std::string msg = "42[\"manual\",{}]";
         ws.send(msg.data(), msg.length(), uWS::OpCode::TEXT);
+		cout << "Line 154 " << endl;
       }
     }
 

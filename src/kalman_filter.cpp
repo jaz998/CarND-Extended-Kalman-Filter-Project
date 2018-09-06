@@ -58,23 +58,40 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
   TODO:
     * update the state by using Extended Kalman Filter equations
   */
+	cout << "Calling Update EKF Function " << endl; 
+	cout << "Declaring variables" << endl; 
+	cout << "px to vy " << endl; 
 	double px = x_[0];
 	double py = x_[1];
+	cout << "line 66" << endl; 
 	double vx = x_[2];
 	double vy = x_[3];
 
+	cout << "rho, phi, rho dot" << endl ; 
 	double rho = sqrt(pow(px, 2) + pow(py, 2));
-	double phi = atan(py / px);
+	double phi = atan2(py,px);
+	cout << "line 73" << endl; 
 	double rho_dot = (px*vx) + (py*vy) / sqrt(pow(px, 2) + pow(py, 2));
-
+	cout << "Declaring vector h" << endl; 
 	VectorXd h = VectorXd(3);
+	cout << "h" << endl; 
 	h << rho, phi, rho_dot;
-	VectorXd y = z - h * x_;
+	cout << "line 79 " << endl;
+	cout << "z size is " << z.size() << endl;
+	cout << "h size is " << h.size() << endl; 
+	cout << "x_ size is " << x_.size() << endl;
+	VectorXd y = z - h;
+	cout << "line 81" << endl;
 	MatrixXd S = H_ * P_*H_.transpose() + R_;
+	cout << "line 83" << endl;	
 	MatrixXd K = P_ * H_.transpose()*S.transpose();
+	cout << "line 85" << endl; 
 	x_ = x_ + K * y;
+	cout << "line 87 " << endl; 
 	MatrixXd I = MatrixXd::Identity(4, 4);
+	cout << "line 89" << endl; 
 	P_ = (I - K * H_)*P_;
+	cout << "line 91" << endl; 
 
 
 
