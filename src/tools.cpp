@@ -33,11 +33,17 @@ VectorXd Tools::CalculateRMSE(const vector<VectorXd> &estimations,
 
 	for (unsigned int i; i < estimations.size(); i++) {
 		VectorXd diff = estimations[i] - ground_truth[i];
+		cout << "Estimation size " << estimations.size() << endl;
+		cout << "Diff " << diff << endl;
+		cout << "line 37 " << endl;
 		diff = pow(diff.array(), 2);
 		RMSE = diff + RMSE;
 	}
 	RMSE = RMSE / estimations.size();
+	cout << "Estimation size " << estimations.size() << endl;
 	RMSE = sqrt(RMSE.array());
+	cout << "Printing RMSE " << endl;
+	cout << RMSE << endl;
 	return RMSE;
 
 }

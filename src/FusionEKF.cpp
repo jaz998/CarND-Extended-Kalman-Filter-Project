@@ -82,14 +82,13 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
 		double rho = measurement_pack.raw_measurements_[0];
 		double phi = measurement_pack.raw_measurements_[1];
 		double rho_dot = measurement_pack.raw_measurements_[2];
-		//Checking it's not divided by zero
 		double px = rho * cos(phi);
-		if (px < 0.001) {
-			px = 0.001;
+		if (px < 0.0001) {
+			px = 0.0001;
 		}
 		double py = rho * sin(phi);
-		if (py < 0.001) {
-			py = 0.001;
+		if (py < 0.0001) {
+			py = 0.0001;
 		}
 		double vx = rho_dot * cos(phi);
 		double vy = rho_dot * sin(phi);
@@ -146,7 +145,7 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
   ekf_.Q_ << pow(delta_t, 4) / 4 * noise_ax, 0, pow(delta_t, 3) / 2 * noise_ax, 0,
 	  0, pow(delta_t, 4) / 4 * noise_ay, 0, pow(delta_t, 3) / 2 * noise_ay,
 	  pow(delta_t, 3) / 2 * noise_ax, 0, pow(delta_t, 2)*noise_ax, 0,
-	  0, pow(delta_t, 3) / 2 * pow(noise_ay, 2), 0, pow(delta_t, 2)*pow(noise_ay, 2);
+	  0, pow(delta_t, 3) / 2 * noise_ay, 0, pow(delta_t, 2)*noise_ay;
 
 
   ekf_.Predict();

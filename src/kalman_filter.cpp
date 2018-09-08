@@ -71,7 +71,7 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
 	double rho = sqrt(pow(px, 2) + pow(py, 2));
 	double phi = atan2(py,px);
 	cout << "line 73" << endl; 
-	double rho_dot = (px*vx) + (py*vy) / sqrt(pow(px, 2) + pow(py, 2));
+	double rho_dot = ((px*vx) + (py*vy)) / sqrt(pow(px, 2) + pow(py, 2));
 	cout << "Declaring vector h" << endl; 
 	VectorXd h = VectorXd(3);
 	cout << "h" << endl; 
