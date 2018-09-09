@@ -31,7 +31,7 @@ VectorXd Tools::CalculateRMSE(const vector<VectorXd> &estimations,
 		return RMSE;
 	}
 
-	for (unsigned int i; i < estimations.size(); i++) {
+	for (unsigned int i; i < estimations.size(); ++i) {
 		VectorXd diff = estimations[i] - ground_truth[i];
 		cout << "Estimation size " << estimations.size() << endl;
 		cout << "Diff " << diff << endl;
@@ -41,7 +41,7 @@ VectorXd Tools::CalculateRMSE(const vector<VectorXd> &estimations,
 	}
 	RMSE = RMSE / estimations.size();
 	cout << "Estimation size " << estimations.size() << endl;
-	RMSE = sqrt(RMSE.array());
+	RMSE = RMSE.array().sqrt();
 	cout << "Printing RMSE " << endl;
 	cout << RMSE << endl;
 	return RMSE;
@@ -61,6 +61,11 @@ MatrixXd Tools::CalculateJacobian(const VectorXd& x_state) {
 	MatrixXd Jacobian(3, 4);
 	double squared_root = sqrt(pow(px, 2) + pow(py, 2));
 	double squared_sum = pow(px, 2) + pow(py, 2);
+	//Check whether it's divided by zero 
+	if (fabs(squared_sum) < 0.0001) {
+		cout << "Error: one element of Jacobian function is divied by zero" << endl;
+		return	Jacobian;
+	}
 	Jacobian << px / squared_root, py / squared_root, 0, 0,
 		-py / squared_sum, px / squared_sum, 0, 0,
 		py*(vx*py - vy * px) / pow(squared_sum, 3 / 2), px*(vy*px - vx * py) / pow(squared_sum, 3 / 2), px / squared_root, py / squared_root;
