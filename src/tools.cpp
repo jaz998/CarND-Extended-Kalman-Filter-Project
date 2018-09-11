@@ -33,17 +33,19 @@ VectorXd Tools::CalculateRMSE(const vector<VectorXd> &estimations,
 
 	for (unsigned int i; i < estimations.size(); ++i) {
 		VectorXd diff = estimations[i] - ground_truth[i];
-		cout << "Estimation size " << estimations.size() << endl;
-		cout << "Diff " << diff << endl;
-		cout << "line 37 " << endl;
+		//cout << "Estimation size " << estimations.size() << endl;
+		//cout << "Diff " << diff << endl;
+		//cout << "line 37 " << endl;
 		diff = pow(diff.array(), 2);
 		RMSE = diff + RMSE;
+		//cout << "Showing temp RMSE " << RMSE << endl;
+		//getchar();
 	}
 	RMSE = RMSE / estimations.size();
-	cout << "Estimation size " << estimations.size() << endl;
+	//cout << "Estimation size " << estimations.size() << endl;
 	RMSE = RMSE.array().sqrt();
-	cout << "Printing RMSE " << endl;
-	cout << RMSE << endl;
+	//cout << "Printing RMSE " << endl;
+	//cout << RMSE << endl;
 	return RMSE;
 
 }
@@ -69,6 +71,7 @@ MatrixXd Tools::CalculateJacobian(const VectorXd& x_state) {
 	Jacobian << px / squared_root, py / squared_root, 0, 0,
 		-py / squared_sum, px / squared_sum, 0, 0,
 		py*(vx*py - vy * px) / pow(squared_sum, 3 / 2), px*(vy*px - vx * py) / pow(squared_sum, 3 / 2), px / squared_root, py / squared_root;
+	cout << "Jacobian matrix is " << Jacobian << endl;
 	return Jacobian;
 
 				
