@@ -66,14 +66,33 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
 	cout << "px, py, vx, vy: " << px << py << vx << vy << endl;
 
 	double rho = sqrt(pow(px, 2) + pow(py, 2));
+	// Check division by zero
+	if (rho < 0.00001) {
+		rho = sqrt((pow(px, 2) + 0.001) + (pow(py, 2) + 0.001)); 
+	}
+
 	double phi = atan2(py,px);
 	double rho_dot = ((px*vx) + (py*vy)) / sqrt(pow(px, 2) + pow(py, 2));
+
+
+
 	cout << "rho, phi, rho_dot " << rho << "," << phi << "," << rho_dot << endl;
 	VectorXd h = VectorXd(3);
 	h << rho, phi, rho_dot;
 	VectorXd y = z - h;
+	cout << "y (before normalization) " << endl;
+	cout << y << endl;
+	cout << "Value of M_PI:" << M_PI << endl;
 
-	cout << "y: " << endl;
+	// Normalize the angle
+	while (y(1)>M_PI) {
+		y(1) -= 2 * M_PI;
+	}
+	while (y(1)<-M_PI) {
+		y(1) += 2 * M_PI;
+	}
+
+	cout << "y (after normalizing) " << endl;
 	cout << y << endl;
 
 
